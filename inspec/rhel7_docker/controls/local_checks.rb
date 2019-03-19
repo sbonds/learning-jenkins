@@ -7,6 +7,6 @@ control 'docker_installed' do
   title 'Check that Docker is installed'
   describe package('docker') do
     it { should be_installed }
-    its { version should cmp >= '1.13.1' }
+    its ('version') { should cmp >= '1.13.1' }
   end
 end
