@@ -18,3 +18,16 @@
     delegate_to: localhost
     fail: msg="Not running as 'jenkins'"
     when: lookup('env','USER') != 'jenkins'
+  - name: Create a Jenkins docker container
+    delegate_to: localhost
+    docker_container:
+      name: jenkins
+      image: jenkinsci/blueocean
+      volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins-data:/home/jenkins/jenkins_home
+      published_ports:
+      - 8080:8080
+      - 50000:50000
+    register: docker_container_info
+  - debug: var=docker_container_info
