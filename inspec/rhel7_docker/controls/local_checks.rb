@@ -1,19 +1,12 @@
 # encoding: utf-8
-# copyright: 2018, The Authors
+# copyright: 2018, Steve Bonds
 
-title 'sample section'
+title 'Checks of the local host for running Jenkins in Docker'
 
-# you can also use plain tests
-describe file('/tmp') do
-  it { should be_directory }
-end
-
-# you add controls here
-control 'tmp-1.0' do                        # A unique ID for this control
-  impact 0.7                                # The criticality, if this control fails.
-  title 'Create /tmp directory'             # A human-readable title
-  desc 'An optional description...'
-  describe file('/tmp') do                  # The actual test
-    it { should be_directory }
+control 'docker_installed' do
+  title 'Check that Docker is installed'
+  describe package('docker') do
+    it { should be_installed }
+    its { version should cmp >= '1.13.1' }
   end
 end

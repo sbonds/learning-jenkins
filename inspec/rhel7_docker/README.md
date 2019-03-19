@@ -1,3 +1,3 @@
-# Example InSpec Profile
+# RHEL7 Jenkins in Docker
 
-This example shows the implementation of an InSpec profile.
+Check that the host server appears set up to run a Jenkins instance inside Docker.

@@ -1,10 +1,11 @@
 name: rhel7_docker
-title: InSpec Profile
-maintainer: The Authors
-copyright: The Authors
-copyright_email: you@example.com
-license: Apache-2.0
-summary: An InSpec Compliance Profile
+title: Check local server is ready to host a Jenkins Docker container
+maintainer: Steve Bonds
+copyright: Steve Bonds
+copyright_email: sbonds@gmail.com
+license: GNU GPL 2.0
+summary: Local server checks for hosting Jenkins in a Docker container
 version: 0.1.0
 supports:
-  platform: os
+  platform-family: redhat
+  release: 7
