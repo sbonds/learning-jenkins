@@ -8,3 +8,7 @@ summary: Local server checks for hosting Jenkins in a Docker container
 version: 0.1.0
 supports:
   platform-family: redhat
+attributes:
+  - name: local_subnet
+    type: string
+    value: 10.1.2.0/24

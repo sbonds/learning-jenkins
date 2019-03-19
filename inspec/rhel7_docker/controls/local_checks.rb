@@ -18,3 +18,30 @@ control 'software_installed' do
     its ('version') { should cmp >= '1.8.0' }
   end
 end
+
+# Ansible will later insist on running as this user
+control 'jenkins_user' do
+  title "Check that a 'jenkins' UNIX user exists"
+  describe user('jenkins') do
+    it {should exist }
+    its('groups') { should include 'docker' }
+  end
+end
+
+control 'docker_group' do
+  title "Check that a 'docker' UNIX group exists"
+  describe group('docker') do
+    it {should exist }
+    its('members') { should include 'jenkins' }
+  end
+end
+
+# Arguably the default doesn't really need to be public, but this lets
+# me be sure which zone to check as Inspec doesn't seem to have a way
+# to refer to the default zone for later checks.
+describe firewalld do
+  it { should be_running }
+  its('default_zone') { should eq 'public' }
+  it { should have_rule_enabled('family=ipv4 source address=' + attribute(local_subnet) + ' port port=8080 protocol=tcp accept', 'public') }
+  it { should have_rule_enabled('family=ipv4 source address=' + attribute(local_subnet) + ' port port=50000 protocol=tcp accept', 'public') }
+end
