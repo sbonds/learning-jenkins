@@ -11,9 +11,9 @@ control 'software_installed' do
   end
   describe package('ansible') do
     it { should be_installed }
-    its ('version') { should cmp >= '2.7.8' }
+    its ('version') { should cmp >= '2.7.8-0' }
   end
-  describe package('java') do
+  describe package('java-1.8.0-openjdk-headless') do
     it { should be_installed }
     its ('version') { should cmp >= '1.8.0' }
   end
