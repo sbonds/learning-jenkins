@@ -1,9 +1,23 @@
 # learning-jenkins
 Learn how to get Jenkins CI/CD working
 
-# Docker Setup
+# Host Setup
+
+## Inspec
+
+Used to check whether everything is set up on the host to a point where Ansible can work.
+
+## Docker
 
 Docker was installed on a CentOS 7 server.
+
+## Ansible
+
+This will be used to automate changes needed to the host and/or Docker containers.
+
+## Java or OpenJDK
+
+Used for the Jenkins CLI
 
 # GitHub Setup
 
@@ -61,9 +75,25 @@ Grab the Jenkins Docker image and fire it up. Map /var/run/docker.sock so that t
     # exit
     $ docker restart jenkins
 
-# Configure Jenkins
+# Configure Jenkins inside container
 
-TODO
+## Jenkins CLI
+
+Download it from the Jenkins Docker image at `https://localhost:8080/jnlpJars/jenkins-cli.jar`
+
+## Initial Admin Password
+
+http://www.scmgalaxy.com/tutorials/complete-guide-to-use-jenkins-cli-command-line/
+
+Login Jenkins using initialAdminPassword try user `admin` and password from `Jenkins\secrets\initialAdminPassword`
+
+    $ java -jar jenkins-cli.jar -s http://localhost:8080 who-am-i –username admin –password <initial password>
+
+## GitHub access
+
+Jenkins needs the above GitHub API key. This should be considered sensitive information so should not be stored in GitHub. However unless you want to type it in every time, it'll need to be stored somewhere.
+
+Ansible vault, perhaps? (Since I plan to use Ansible anyhow for the host config info.)
 
 # Check build log
 
