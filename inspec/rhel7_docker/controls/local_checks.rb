@@ -42,6 +42,6 @@ end
 describe firewalld do
   it { should be_running }
   its('default_zone') { should eq 'public' }
-  it { should have_rule_enabled('family=ipv4 source address=' + attribute(local_subnet) + ' port port=8080 protocol=tcp accept', 'public') }
-  it { should have_rule_enabled('family=ipv4 source address=' + attribute(local_subnet) + ' port port=50000 protocol=tcp accept', 'public') }
+  it { should have_rule_enabled('family=ipv4 source address=' + attribute('local_subnet') + ' port port=8080 protocol=tcp accept', 'public') }
+  it { should have_rule_enabled('family=ipv4 source address=' + attribute('local_subnet') + ' port port=50000 protocol=tcp accept', 'public') }
 end
