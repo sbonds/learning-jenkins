@@ -14,3 +14,7 @@
       name: jenkins
       comment: Jenkins Docker host user
       groups: docker
+  - name: Check that we're running as 'jenkins'
+    delegate_to: localhost
+    fail: msg="Not running as 'jenkins'"
+    when: lookup('env','USER') != 'jenkins'
