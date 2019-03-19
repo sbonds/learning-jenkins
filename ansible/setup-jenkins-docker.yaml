@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+  - name: Create local 'docker' group
+    delegate_to: localhost
+    group:
+      name: docker
+    register: docker_group
+  - debug: var=docker_group
+  - name: Create local 'jenkins' user in 'docker' secondary group
+    delegate_to: localhost
+    user: 
+      name: jenkins
+      comment: Jenkins Docker host user
+      groups: docker
