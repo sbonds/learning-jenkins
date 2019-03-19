@@ -50,5 +50,23 @@
     docker_container:
       name: jenkins
       restart: yes
+  - name: Download Jenkins Java CLI from container (with retries)
+    delegate_to: localhost
+    get_url:
+      url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+      dest: /tmp/jenkins-cli.jar
+      mode: 0700
+    register: download_cli_result
+    until: download_cli_result.failed == false
+    retries: 6
+    delay: 10
+  - name: Test CLI login using initial admin password
+    local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 who-am-i --username admin --password {{admin_password.stdout_lines[0]|quote}}
+    register: jenkins_cli_whoami
+- name: Delete Jenkins Java CLI
+    delegate_to: localhost
+    file:
+      path: /tmp/jenkins-cli.jar
+      state: absent
 
 

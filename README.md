@@ -110,15 +110,24 @@ Grab the Jenkins Docker image and fire it up. Map /var/run/docker.sock so that t
 
 ## Jenkins CLI
 
-Download it from the Jenkins Docker image at `https://localhost:8080/jnlpJars/jenkins-cli.jar`
+Download it from the Jenkins Docker image at `http://localhost:8080/jnlpJars/jenkins-cli.jar`
 
 ## Initial Admin Password
 
 http://www.scmgalaxy.com/tutorials/complete-guide-to-use-jenkins-cli-command-line/
 
-Login Jenkins using initialAdminPassword try user `admin` and password from `Jenkins\secrets\initialAdminPassword`
+### Login to Jenkins using initialAdminPassword 
 
-    $ java -jar jenkins-cli.jar -s http://localhost:8080 who-am-i –username admin –password <initial password>
+Use the user `admin` and the password from `/var/jenkins_home/secrets/initialAdminPassword`:
+
+    $ java -jar jenkins-cli.jar -s http://localhost:8080 who-am-i --username admin --password <initial password>
+    Authenticated as: admin
+    Authorities:
+      authenticated
+
+From here we can create an additional user, but that should be parameterized.
+
+TODO: Set up Ansible parameters (vault?) for the instance-specific details
 
 ## GitHub access
 
