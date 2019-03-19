@@ -63,7 +63,7 @@
   - name: Test CLI login using initial admin password
     local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 who-am-i --username admin --password {{admin_password.stdout_lines[0]|quote}}
     register: jenkins_cli_whoami
-- name: Delete Jenkins Java CLI
+  - name: Delete Jenkins Java CLI
     delegate_to: localhost
     file:
       path: /tmp/jenkins-cli.jar
