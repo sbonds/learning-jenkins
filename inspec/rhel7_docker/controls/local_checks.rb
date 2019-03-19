@@ -1,7 +1,9 @@
 # encoding: utf-8
 # copyright: 2018, Steve Bonds
+subnet = attribute('local_subnet', description: 'local subnet in IP/bits format')
 
 title 'Checks of the local host for running Jenkins in Docker'
+
 
 control 'software_installed' do
   title 'Check that needed software is installed'
@@ -42,6 +44,6 @@ end
 describe firewalld do
   it { should be_running }
   its('default_zone') { should eq 'public' }
-  it { should have_rule_enabled('family=ipv4 source address=' + attribute('local_subnet') + ' port port=8080 protocol=tcp accept', 'public') }
-  it { should have_rule_enabled('family=ipv4 source address=' + attribute('local_subnet') + ' port port=50000 protocol=tcp accept', 'public') }
+  it { should have_rule_enabled('family=ipv4 source address=' + subnet + ' port port=8080 protocol=tcp accept', 'public') }
+  it { should have_rule_enabled('family=ipv4 source address=' + subnet + ' port port=50000 protocol=tcp accept', 'public') }
 end
