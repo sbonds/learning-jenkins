@@ -8,4 +8,3 @@ summary: Local server checks for hosting Jenkins in a Docker container
 version: 0.1.0
 supports:
   platform-family: redhat
-  release: 7
