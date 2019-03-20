@@ -45,6 +45,9 @@
       delegate_to: jenkins
       raw: "cat /var/jenkins_home/secrets/initialAdminPassword"
       register: admin_password
+      until: admin_password.failed == false
+      retries: 6
+      delay: 10
     - debug: var=admin_password
     - name: Restart the Jenkins Docker container after the GID change
       delegate_to: localhost
