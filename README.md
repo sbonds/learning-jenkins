@@ -18,6 +18,8 @@
 ## Run the inspec check as `jenkins`
 
     $ cd inspec
+    $ vi rhel7_docker/attributes.yml
+    local_subnet: <the source address in your firewall rule for 8080/50000 below>
     $ inspec exec rhel7_docker --attrs=rhel7_docker/attributes.yml
 
 # Host Setup
