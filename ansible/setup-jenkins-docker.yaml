@@ -1,0 +1,82 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+  - block:
+    - name: Create local 'docker' group
+      delegate_to: localhost
+      group:
+        name: docker
+      register: docker_group
+    - debug: var=docker_group
+    - name: Create local 'jenkins' user in 'docker' secondary group
+      delegate_to: localhost
+      user: 
+        name: jenkins
+        comment: Jenkins Docker host user
+        groups: docker
+    - name: Check that we're running as 'jenkins'
+      delegate_to: localhost
+      fail: msg="Not running as 'jenkins'"
+      when: lookup('env','USER') != 'jenkins'
+    - name: Create a Jenkins docker container
+      delegate_to: localhost
+      docker_container:
+        name: jenkins
+        image: jenkinsci/blueocean
+        volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - jenkins-data:/home/jenkins/jenkins_home
+        published_ports:
+        - 8080:8080
+        - 50000:50000
+      register: docker_container_info
+    - debug: var=docker_container_info
+    - name: Add Jenkins docker container to inventory for future reconfiguration
+      add_host:
+        name: jenkins
+        ansible_connection: docker
+        ansible_user: root
+      changed_when: false
+    - name: Ensure docker group inside container's GID matches outside container (without using Python)
+      delegate_to: jenkins
+      raw: "if [ -e /etc/group.bak ]; then exit 0; else sed -i.bak 's/^docker:.*$/docker:x:{{docker_group.gid|quote}}/' /etc/group; fi"
+    - name: Collect the initial admin password for Jenkins (without using Python)
+      delegate_to: jenkins
+      raw: "cat /var/jenkins_home/secrets/initialAdminPassword"
+      register: admin_password
+      until: admin_password.failed == false
+      retries: 6
+      delay: 10
+    - debug: var=admin_password
+    - name: Restart the Jenkins Docker container after the GID change
+      delegate_to: localhost
+      docker_container:
+        name: jenkins
+        restart: yes
+    - name: Download Jenkins Java CLI from container (with retries)
+      delegate_to: localhost
+      get_url:
+        url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+        dest: /tmp/jenkins-cli.jar
+        mode: 0700
+      register: download_cli_result
+      until: download_cli_result.failed == false
+      retries: 6
+      delay: 10
+    - name: Test CLI login using initial admin password
+      local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 who-am-i --username admin --password {{admin_password.stdout_lines[0]|quote}}
+      register: jenkins_cli_whoami
+    - name: Delete Jenkins Java CLI
+      delegate_to: localhost
+      file:
+        path: /tmp/jenkins-cli.jar
+        state: absent
+    rescue:
+    - name: Delete Jenkins Java CLI
+      delegate_to: localhost
+      file:
+        path: /tmp/jenkins-cli.jar
+        state: absent
+
+
