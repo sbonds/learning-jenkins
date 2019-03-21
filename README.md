@@ -144,7 +144,9 @@ Or perhaps just use his Ansible role as-is?
 
 https://github.com/geerlingguy/ansible-role-jenkins
 
-Perhaps grab a CentOS Docker image and install within there to maintain the benefits of a container AND use a pre-made Ansible role instead continuing down my path of wheel re-invention?
+Perhaps grab a CentOS Docker image and install within there to maintain the benefits of a container AND use a pre-made Ansible role instead continuing down my path of wheel re-invention? (That turned into a nasty episode of [Yak Shaving](http://www.catb.org/~esr/jargon/html/Y/yak-shaving.html). Rather than waste more time before I can get to the real learning, move on to learn more about the Jenkins CLI by simply completing the Setup Wizard by hand.)
+
+TODO: Automate the Setup Wizard process of Jenkins.
 
 ### Option 1: Ansible URL methods
 
