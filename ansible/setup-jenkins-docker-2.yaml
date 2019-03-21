@@ -1,0 +1,3 @@
+---
+# Pick up after the manual completion of the Jenkins web setup wizard
+- debug: var=test_secret_var

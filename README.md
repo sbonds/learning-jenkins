@@ -14,6 +14,8 @@ TODO: bash script to set all this up, since bash will be installed by default on
     $ git clone https://github.com/sbonds/learning-jenkins.git
     $ cd learning-jenkins/ansible
     $ ansible-playbook --inventory=localhost, setup-jenkins-docker.yaml
+    (complete the Web based setup wizard by hand.)
+    $ ansible-playbook --vault-password-file secret_vault_password --inventory=localhost, setup-jenkins-docker-2.yaml
 
 (The extra comma after `localhost,` is important to distinguish a list of one host from a filename.)
 
