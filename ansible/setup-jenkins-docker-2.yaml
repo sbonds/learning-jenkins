@@ -3,4 +3,8 @@
   gather_facts: false
   tasks:
   # Pick up after the manual completion of the Jenkins web setup wizard
-  - debug: var=test_secret_var
+  - name: Include secret info
+    include_vars:
+      file: jenkins-private-info.yaml
+      name: private
+  - debug: var=private.test_secret_var
