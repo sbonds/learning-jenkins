@@ -1,3 +1,6 @@
 ---
-# Pick up after the manual completion of the Jenkins web setup wizard
-- debug: var=test_secret_var
+- hosts: all
+  gather_facts: false
+  tasks:
+  # Pick up after the manual completion of the Jenkins web setup wizard
+  - debug: var=test_secret_var
