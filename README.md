@@ -2,6 +2,8 @@
 
 # Semi-Automated Setup
 
+TODO: bash script to set all this up, since bash will be installed by default on a CentOS 7 test host
+
 ## Install `inspec`, `docker`, and `ansible`
 
     # yum install inspec docker python-docker-py ansible
@@ -129,7 +131,34 @@ Use the user `admin` and the password from `/var/jenkins_home/secrets/initialAdm
 
 From here we can create an additional user, but that should be parameterized.
 
+## Complete Jenkins setup wizard
+
 TODO: Set up Ansible parameters (vault?) for the instance-specific details
+
+Setting up Jenkins ends up being very difficult from Ansible since it's not something the Jenkins CLI can do.
+
+https://github.com/solita/ansible-role-solita.jenkins
+https://github.com/geerlingguy/ansible-role-jenkins/issues/50
+
+Or perhaps just use his Ansible role as-is?
+
+https://github.com/geerlingguy/ansible-role-jenkins
+
+Perhaps grab a CentOS Docker image and install within there to maintain the benefits of a container AND use a pre-made Ansible role instead continuing down my path of wheel re-invention?
+
+### Option 1: Ansible URL methods
+
+This means decoding each conversation with Jenkins and submitting the same data via HTTP POST forms. Ugly and brittle!
+
+### Option 2: Disable the Setup Wizard
+
+This also disables security and leaves us with an unconfigured Jenkins. Those might be things we can correct with automation, though.
+
+It's unclear how to disable the Wizard once Jenkins is already installed. Normally this is done via a Java parameter passed to the Jenkins WAR file.
+
+### Option 3: Selenium browser automation to complete wizard
+
+Sometimes when something needs to move, pushing harder is the answer. This will further complicate out host system setup.
 
 ## GitHub access
 
