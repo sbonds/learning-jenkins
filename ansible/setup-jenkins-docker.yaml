@@ -40,7 +40,7 @@
       changed_when: false
     - name: Ensure docker group inside container's GID matches outside container (without using Python)
       delegate_to: jenkins
-      raw: "if [ -e /etc/group.bak ]; then exit 0; else sed -i.bak 's/^docker:.*$/docker:x:{{docker_group.gid|quote}}:/' /etc/group; fi"
+      raw: "if [ -e /etc/group.bak ]; then exit 0; else sed -i.bak 's/^docker:.*$/docker:x:{{docker_group.gid|quote}}:jenkins/' /etc/group; fi"
     - name: Collect the initial admin password for Jenkins (without using Python)
       delegate_to: jenkins
       raw: "cat /var/jenkins_home/secrets/initialAdminPassword"
