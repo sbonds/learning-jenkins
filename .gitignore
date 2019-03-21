@@ -13,3 +13,6 @@
 
 # Omit local Inspec attributes
 attributes.yml
+
+# Skip anything secret
+secret*
