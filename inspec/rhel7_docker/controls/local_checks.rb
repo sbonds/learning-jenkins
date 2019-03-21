@@ -25,7 +25,7 @@ control 'software_installed' do
   end
   # Ansible role used for auto-provisioning Jenkins inside a CentOS container
   describe command('ansible-galaxy list') do
-    its('exit status') { should eq 0 }
+    its('exit_status') { should eq 0 }
     its('stdout') { should match (/^- geerlingguy.jenkins,/) }
   end
 end
