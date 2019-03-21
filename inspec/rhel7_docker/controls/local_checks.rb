@@ -23,6 +23,11 @@ control 'software_installed' do
     it { should be_installed }
     its ('version') { should cmp >= '1.8.0' }
   end
+  # Ansible role used for auto-provisioning Jenkins inside a CentOS container
+  describe command('ansible-galaxy list') do
+    its('exit status') { should eq 0 }
+    its('stdout') { should match (/^- geerlingguy.jenkins,/) }
+  end
 end
 
 # Ansible will later insist on running as this user
