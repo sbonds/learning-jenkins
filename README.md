@@ -100,7 +100,7 @@ https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#non-ssh-
 Grab the Jenkins Docker image and fire it up. Map /var/run/docker.sock so that this Docker image can access docker to create other Docker instances in parallel to itself on the host server.
 
     $ docker pull centos
-    $ docker run --name jenkins --detach --publish 8080:8080 -p 50000:50000 --volume jenkins-data:/home/jenkins/jenkins_home --volume /var/run/docker.sock:/var/run/docker.sock centos:centos7.6.1810
+    $ docker run --name jenkins --detach --publish 8080:8080 -p 50000:50000 --volume /var/run/docker.sock:/var/run/docker.sock centos:centos7.6.1810
 
 Use a fixed version so that the results of the auto-setup are somewhat predictable.
 
