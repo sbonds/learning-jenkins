@@ -144,6 +144,44 @@ Good news:
     + go version
     go version go1.12.1 linux/amd64
 
+# Bare metal physical server setup
+
+There's nothing like starting from (almost) nothing to ensure that a process works. What is needed to set up a Docker host starting from an empty server?
+
+## Hardware config
+
+While other hardware would likely work, this is what I have available. These 5+ year old servers can be found very cheap and are new enough that power usage was starting to be a concern, so they only pull about 100W instead of the 300W of older models. It adds up when running 24x7.
+
+### Server: HP DL380 G7
+
+## Boot config
+
+Goal: Boot the server for PXE network boot and the OS gets installed
+
+### DHCP
+
+TODO: Inspec test for DHCP entries
+
+### DDNS (optional)
+
+TODO: Is there a way for the ILO to register its connection into a DNS subdomain?
+
+### PXE/TFTP
+
+TODO: Inspec test for PXE entries and related configs needed to network boot
+
+### iSCSI (optional)
+
+TODO: Avoid the need for internal drives and boot from iSCSI. This never worked well and internal drives in the server are not hard to arrange, so this is a pretty low priority
+
+### Kickstart
+
+Defines the OS configuration as much as possible. Avoid complex Bash scripts in favor of Ansible later.
+
+### Ansible
+
+Configure things that can't be easily captured in Kickstart.
+
 # Why all this?
 
 ## Explore Jenkins Setup
