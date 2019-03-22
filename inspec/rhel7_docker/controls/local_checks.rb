@@ -23,6 +23,10 @@ control 'software_installed' do
     it { should be_installed }
     its ('version') { should cmp >= '1.4.0-0' }
   end
+  describe package('coreutils') do
+    it { should be_installed }
+    its ('version') { should cmp >= '8.22-0' }
+  end
   describe package('java-1.8.0-openjdk-headless') do
     it { should be_installed }
     its ('version') { should cmp >= '1.8.0' }
