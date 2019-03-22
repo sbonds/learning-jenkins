@@ -8,3 +8,17 @@
       file: jenkins-private-info.yaml
       name: private
   - debug: var=private.test_secret_var
+  - name: Download Jenkins Java CLI from container (with retries)
+    delegate_to: localhost
+    get_url:
+      url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+      dest: /tmp/jenkins-cli.jar
+      mode: 0700
+    register: download_cli_result
+    until: download_cli_result.failed == false
+    retries: 6
+    delay: 10
+  - name: Upload previously downloaded GUI-created job definition
+    local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 -auth "sbonds_adm:{{pivate.jenkins_admin_password|quote}}" create-job "Hello World" < "Hello World Go.xml"
+    register: jenkins_cli_job_upload
+  - debug: var=jenkins_cli_job_upload
