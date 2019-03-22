@@ -20,22 +20,27 @@
     delay: 10
   # TODO: make a loop over the create temp / process template / create cred / delete section
   # so multiple creds/users can be added
+  # TODO: Check that each user doesn't already exist so this playbook will be idempotent
   - name: Create temp file for holding Jenkins credential creation Groovy script
     delegate_to: localhost
     tempfile:
       state: file
-      prefix: jenkins-setup
+      prefix: jenkins-setup-
     register: jenkins_setup_creds_tempfile
   - debug: var=jenkins_setup_creds_tempfile
-  - name: Create custom Groovy script to add {{ jenkins_cred_to_add.username }} to Jenkins credentials
+  - name: "Create custom Groovy script to add '{{ private.jenkins_cred_to_add_username }}' to Jenkins credentials"
     delegate_to: localhost
     template:
       # TODO: ensure jenkins_cred_to_add.username and jenkins_cred_to_add.password are set
       src: jenkins_add_cred.groovy.js2
       dest: "{{ jenkins_setup_creds_tempfile.path }}"
+  - name: Upload previously downloaded GUI-created job definition
+    local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 -auth "sbonds_adm:{{private.jenkins_admin_password|quote}}" groovy "{{ jenkins_setup_creds_tempfile.path }}"
+    register: jenkins_create_creds
+  - debug: var=jenkins_create_creds
   # The 'shred' overwrite is NOT a guarantee that the sensitive data in the temp file cannot be recovered with effort, but it helps make it harder.
-  - name: Overwrite and remove credentials temp file
-    local_action: shell shred --zero --remove {{ jenkins_setup_creds_tempfile.path|quote }}
+  ##- name: Overwrite and remove credentials temp file
+  ##  local_action: shell shred --zero --remove {{ jenkins_setup_creds_tempfile.path|quote }}
   ##- name: Check if temp file removed
   ##  delegate_to: localhost
   ##  stat: 

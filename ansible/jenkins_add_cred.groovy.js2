@@ -34,4 +34,4 @@ def addPassword = { username, new_password ->
     }
 }
 
-addPassword('{{ jenkins_cred_to_add.username }}', '{{ jenkins_cred_to_add.password }}')
+addPassword('{{ private.jenkins_cred_to_add_username }}', '{{ private.jenkins_cred_to_add_password }}')
