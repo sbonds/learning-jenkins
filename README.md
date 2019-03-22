@@ -178,6 +178,16 @@ It does not appear to be possible to define a new job using the CLI except by XM
 
 It would be interesting to see how well an export from one environment (e.g. sandbox) and and import into a new environment (e.g. staging) using the job export/import would work out.
 
+## Jenkins job fixes
+
+Job comes up claiming that re-indexing needs to happen.
+
+It looks like the credentials in the job XML aren't enough to work. (Those embedded IDs are rearing their ugly head.)
+
+TODO NEXT: Re-create the job in the GUI and export both the job definition and the credential definition as XML for later import.
+
+https://stackoverflow.com/questions/41579229/triggering-branch-indexing-on-multibranch-pipelines-jenkins-git
+
 # Check build log
 
 Good news:
