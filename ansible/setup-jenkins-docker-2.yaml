@@ -18,7 +18,24 @@
     until: download_cli_result.failed == false
     retries: 6
     delay: 10
+  - name: Create temp file for holding Jenkins credential creation Groovy script
+    tempfile:
+      state: file
+      prefix: jenkins-setup
+    register: jenkins_setup_creds_tempfile
+  - debug: var=jenkins_setup_creds_tempfile
+  # The 'shred' overwrite is NOT a guarantee that the sensitive data in the temp file cannot be recovered with effort, but it helps make it harder.
+  - name: Overwrite and remove credentials temp file
+    local_action: shell shred --zero --remove {{ jenkins_setup_creds_tempfile.path|quote }}
+  - name: Check if temp file removed
+    stat: 
+      path: "{{ jenkins_setup_creds_tempfile.path }}"
+    register: jenkins_setup_creds_tempfile_stat
+  - name: Fail unless temp file removed
+    fail: msg="A tempfile containing sensitive info at {{ jenkins_setup_creds_tempfile.path }} was not shredded and removed. Try running 'shred' on it manually."
+    when: jenkins_setup_creds_tempfile_stat.stat.exists
+  # Just the job isn't enough-- it relies on credentials for GitHub
   - name: Upload previously downloaded GUI-created job definition
-    local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 -auth "sbonds_adm:{{pivate.jenkins_admin_password|quote}}" create-job "Hello World" < "Hello World Go.xml"
+    local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 -auth "sbonds_adm:{{private.jenkins_admin_password|quote}}" create-job "Hello World" < "Hello World Go.xml"
     register: jenkins_cli_job_upload
   - debug: var=jenkins_cli_job_upload

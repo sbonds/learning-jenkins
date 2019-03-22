@@ -63,6 +63,18 @@ TODO: Due to a bug in `polkit` no non-root reading of firewall rules works right
 * https://github.com/firewalld/firewalld/issues/111
 * https://bugzilla.redhat.com/show_bug.cgi?id=1375655
 
+## (Optional) Set up encrypted filesystems
+
+Sometimes sensitive information like passwords must be stored encrypted, depending on specific nontechnical requirements.
+
+### Ansible Vault password is cleartext
+
+The Ansible vault password is stored in cleartext.
+
+### Jenkins credential passwords temporarily cleartext
+
+In order to create credentials the Groovy script needs to be created with the cleartext credentials embedded within it. 
+
 # GitHub Setup
 
 ## API Key creation for Jenkins to use
@@ -167,6 +179,19 @@ Sometimes when something needs to move, pushing harder is the answer. This will 
 Jenkins needs the above GitHub API key. This should be considered sensitive information so should not be stored in GitHub. However unless you want to type it in every time, it'll need to be stored somewhere.
 
 It went into the `ansible/jenkins-private-info.yaml` Ansible Vault file.
+
+## Jenkins credentials
+
+Before a job can be created that uses credentials (e.g. the github.com login) those credentials need to be created. I found some good info at https://stackoverflow.com/questions/35025829/i-want-to-create-jenkins-credentials-via-ansible.
+
+### Passing the credential info to the Groovy script
+
+It doesn't look like there's a way to directly run a file through the Jinja2 template processor while feeding it to a command, so the steps would be:
+1. Allocate a temp file
+2. Process a Jinja2 template into the temp file, adding credentials (they will be stored as cleartext, temporarily)
+3. Use the CLI "groovy" command to run the credential add Groovy script
+4. (optional) overwrite the temp file with junk data to confound recovery of the password from a "deleted" file
+5. Delete the temp file
 
 ## Jenkins Job
 
