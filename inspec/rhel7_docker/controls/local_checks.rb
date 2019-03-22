@@ -19,6 +19,10 @@ control 'software_installed' do
     it { should be_installed }
     its ('version') { should cmp >= '1.10.6-0' }
   end
+  describe package('python2-jenkins-job-builder') do
+    it { should be_installed }
+    its ('version') { should cmp >= '1.4.0-0' }
+  end
   describe package('java-1.8.0-openjdk-headless') do
     it { should be_installed }
     its ('version') { should cmp >= '1.8.0' }

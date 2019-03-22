@@ -176,6 +176,11 @@ https://stackoverflow.com/questions/8424228/export-import-jobs-in-jenkins
 
 It does not appear to be possible to define a new job using the CLI except by XML import. Note that the XML would be exceedingly difficult to craft by hand, if not outright impossible, due to its dependencies on specific internally referenced ID numbers.
 
+Better options for creating jobs:
+* https://jenkins.io/solutions/pipeline/
+* https://wiki.jenkins.io/display/JENKINS/Job+DSL+Plugin (still requires a freestyle "seed" project manually created via GUI)
+* https://docs.openstack.org/infra/jenkins-job-builder/ (looks especially promising as its whole job is to turn YAML/JSON into the convoluted Jenkins XML.)
+
 It would be interesting to see how well an export from one environment (e.g. sandbox) and and import into a new environment (e.g. staging) using the job export/import would work out.
 
 ## Jenkins job fixes
