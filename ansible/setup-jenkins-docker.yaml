@@ -8,7 +8,6 @@
       group:
         name: docker
       register: docker_group
-    - debug: var=docker_group
     - name: Create local 'jenkins' user in 'docker' secondary group
       delegate_to: localhost
       user: 
@@ -31,7 +30,6 @@
         - 8080:8080
         - 50000:50000
       register: docker_container_info
-    - debug: var=docker_container_info
     - name: Add Jenkins docker container to inventory for future reconfiguration
       add_host:
         name: jenkins
@@ -48,7 +46,6 @@
       until: admin_password.failed == false
       retries: 6
       delay: 10
-    - debug: var=admin_password
     - name: Restart the Jenkins Docker container after the GID change
       delegate_to: localhost
       docker_container:
@@ -67,7 +64,7 @@
     - name: Test CLI login using initial admin password
       local_action: shell java -jar /tmp/jenkins-cli.jar -s http://localhost:8080 who-am-i --username admin --password {{admin_password.stdout_lines[0]|quote}}
       register: jenkins_cli_whoami
-    - debug: "The initial admin password needed for the web setup is: {{admin_password.stdout_lines[0]|quote}}"
+    - debug: msg="The initial admin password needed for the web setup is: {{admin_password.stdout_lines[0]|quote}}"
     - name: Delete Jenkins Java CLI
       delegate_to: localhost
       file:
