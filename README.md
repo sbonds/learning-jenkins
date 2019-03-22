@@ -89,8 +89,6 @@ Make sure the host user `jenkins` can run docker commands:
 
     # useradd --groups docker jenkins
 
-
-
 ## Ansible playbook for starting Jenkins
 
 Interestingly, the Ansible folks even use Jenkins-in-Docker as one of their examples:
@@ -168,7 +166,17 @@ Sometimes when something needs to move, pushing harder is the answer. This will 
 
 Jenkins needs the above GitHub API key. This should be considered sensitive information so should not be stored in GitHub. However unless you want to type it in every time, it'll need to be stored somewhere.
 
-Ansible vault, perhaps? (Since I plan to use Ansible anyhow for the host config info.)
+It went into the `ansible/jenkins-private-info.yaml` Ansible Vault file.
+
+## Jenkins Job
+
+The CLI manages jobs via raw XML files.
+
+https://stackoverflow.com/questions/8424228/export-import-jobs-in-jenkins
+
+It does not appear to be possible to define a new job using the CLI except by XML import. Note that the XML would be exceedingly difficult to craft by hand, if not outright impossible, due to its dependencies on specific internally referenced ID numbers.
+
+It would be interesting to see how well an export from one environment (e.g. sandbox) and and import into a new environment (e.g. staging) using the job export/import would work out.
 
 # Check build log
 
