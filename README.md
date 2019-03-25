@@ -284,3 +284,9 @@ Any time I need to do something a lot, I think of automation. And Ansible works 
 ## Inspec
 
 Since I'm trying to encourage myself to use Behavior Driven Infrastructure Development, this was a good place to start. Define what I think the host should look like and then write some tests to confirm it. We'll see how well this helps when I get to the aforementioned "set it all up again starting from nothing" phase. For now, this was mostly just a chance to learn Inspec a bit better by having a project that required it.
+
+# Stop Shaving the Yak
+
+https://seths.blog/2005/03/dont_shave_that/
+
+OK, this has snowballed well away from my original goal of learning Jenkins into learning a lot more about Ansible. While not necessarily bad, it's not what I had planned when I started. Go for a manual Jenkins setup and start exploring the Joy of Jenkinsfiles (and possibly Jenkins Job Builder) instead of this auto-build segway.
