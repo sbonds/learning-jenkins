@@ -21,7 +21,7 @@ For the "red" test we expect some of these to fail, depending on how much was al
     $ git clone https://github.com/sbonds/learning-jenkins.git
     $ cd learning-jenkins/ansible
     $ ansible-playbook --inventory=localhost, setup-jenkins-docker.yaml
-    (complete the Web based setup wizard by hand.)
+    (complete the Web based setup wizard by hand using the initial admin password printed by Ansible)
 
 (The extra comma after `localhost,` is important to distinguish a list of one host from a filename.)
 
