@@ -14,6 +14,8 @@ TODO: bash script to set all this up, since bash will be installed by default on
     $ git clone https://github.com/sbonds/learning-jenkins.git
     $ cd learning-jenkins/ansible
     $ ansible-playbook --inventory=localhost, setup-jenkins-docker.yaml
+    (complete the Web based setup wizard by hand.)
+    $ ansible-playbook --vault-password-file secret_vault_password --inventory=localhost, setup-jenkins-docker-2.yaml
 
 (The extra comma after `localhost,` is important to distinguish a list of one host from a filename.)
 
@@ -61,6 +63,18 @@ TODO: Due to a bug in `polkit` no non-root reading of firewall rules works right
 * https://github.com/firewalld/firewalld/issues/111
 * https://bugzilla.redhat.com/show_bug.cgi?id=1375655
 
+## (Optional) Set up encrypted filesystems
+
+Sometimes sensitive information like passwords must be stored encrypted, depending on specific nontechnical requirements.
+
+### Ansible Vault password is cleartext
+
+The Ansible vault password is stored in cleartext.
+
+### Jenkins credential passwords temporarily cleartext
+
+In order to create credentials the Groovy script needs to be created with the cleartext credentials embedded within it. 
+
 # GitHub Setup
 
 ## API Key creation for Jenkins to use
@@ -86,8 +100,6 @@ Note the GID for later.
 Make sure the host user `jenkins` can run docker commands:
 
     # useradd --groups docker jenkins
-
-
 
 ## Ansible playbook for starting Jenkins
 
@@ -144,7 +156,9 @@ Or perhaps just use his Ansible role as-is?
 
 https://github.com/geerlingguy/ansible-role-jenkins
 
-Perhaps grab a CentOS Docker image and install within there to maintain the benefits of a container AND use a pre-made Ansible role instead continuing down my path of wheel re-invention?
+Perhaps grab a CentOS Docker image and install within there to maintain the benefits of a container AND use a pre-made Ansible role instead continuing down my path of wheel re-invention? (That turned into a nasty episode of [Yak Shaving](http://www.catb.org/~esr/jargon/html/Y/yak-shaving.html). Rather than waste more time before I can get to the real learning, move on to learn more about the Jenkins CLI by simply completing the Setup Wizard by hand.)
+
+TODO: Automate the Setup Wizard process of Jenkins.
 
 ### Option 1: Ansible URL methods
 
@@ -164,7 +178,45 @@ Sometimes when something needs to move, pushing harder is the answer. This will 
 
 Jenkins needs the above GitHub API key. This should be considered sensitive information so should not be stored in GitHub. However unless you want to type it in every time, it'll need to be stored somewhere.
 
-Ansible vault, perhaps? (Since I plan to use Ansible anyhow for the host config info.)
+It went into the `ansible/jenkins-private-info.yaml` Ansible Vault file.
+
+## Jenkins credentials
+
+Before a job can be created that uses credentials (e.g. the github.com login) those credentials need to be created. I found some good info at https://stackoverflow.com/questions/35025829/i-want-to-create-jenkins-credentials-via-ansible.
+
+### Passing the credential info to the Groovy script
+
+It doesn't look like there's a way to directly run a file through the Jinja2 template processor while feeding it to a command, so the steps would be:
+1. Allocate a temp file
+2. Process a Jinja2 template into the temp file, adding credentials (they will be stored as cleartext, temporarily)
+3. Use the CLI "groovy" command to run the credential add Groovy script
+4. (optional) overwrite the temp file with junk data to confound recovery of the password from a "deleted" file
+5. Delete the temp file
+
+## Jenkins Job
+
+The CLI manages jobs via raw XML files.
+
+https://stackoverflow.com/questions/8424228/export-import-jobs-in-jenkins
+
+It does not appear to be possible to define a new job using the CLI except by XML import. Note that the XML would be exceedingly difficult to craft by hand, if not outright impossible, due to its dependencies on specific internally referenced ID numbers.
+
+Better options for creating jobs:
+* https://jenkins.io/solutions/pipeline/
+* https://wiki.jenkins.io/display/JENKINS/Job+DSL+Plugin (still requires a freestyle "seed" project manually created via GUI)
+* https://docs.openstack.org/infra/jenkins-job-builder/ (looks especially promising as its whole job is to turn YAML/JSON into the convoluted Jenkins XML.)
+
+It would be interesting to see how well an export from one environment (e.g. sandbox) and and import into a new environment (e.g. staging) using the job export/import would work out.
+
+## Jenkins job fixes
+
+Job comes up claiming that re-indexing needs to happen.
+
+It looks like the credentials in the job XML aren't enough to work. (Those embedded IDs are rearing their ugly head.)
+
+TODO NEXT: Re-create the job in the GUI and export both the job definition and the credential definition as XML for later import.
+
+https://stackoverflow.com/questions/41579229/triggering-branch-indexing-on-multibranch-pipelines-jenkins-git
 
 # Check build log
 
@@ -232,3 +284,9 @@ Any time I need to do something a lot, I think of automation. And Ansible works 
 ## Inspec
 
 Since I'm trying to encourage myself to use Behavior Driven Infrastructure Development, this was a good place to start. Define what I think the host should look like and then write some tests to confirm it. We'll see how well this helps when I get to the aforementioned "set it all up again starting from nothing" phase. For now, this was mostly just a chance to learn Inspec a bit better by having a project that required it.
+
+# Stop Shaving the Yak
+
+https://seths.blog/2005/03/dont_shave_that/
+
+OK, this has snowballed well away from my original goal of learning Jenkins into learning a lot more about Ansible. While not necessarily bad, it's not what I had planned when I started. Go for a manual Jenkins setup and start exploring the Joy of Jenkinsfiles (and possibly Jenkins Job Builder) instead of this auto-build segway.
