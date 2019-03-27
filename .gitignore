@@ -11,5 +11,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Omit local Inspec attributes
+# Omit local Inspec attributes and temp file
 attributes.yml
+inspec.lock
