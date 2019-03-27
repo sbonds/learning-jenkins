@@ -1,3 +1,6 @@
+# Files named secret* are presumed to be private info not to be put into GitHub
+secret*
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
