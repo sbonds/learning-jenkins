@@ -8,23 +8,29 @@ TODO: bash script to set all this up, since bash will be installed by default on
 
     # yum install inspec docker python-docker-py ansible
 
-## Run the Ansible do-most-everything playbook as `jenkins`
+## Run the "red" inspec check as `jenkins`
+
+For the "red" test we expect some of these to fail, depending on how much was already set up.
+
+    $ cd inspec
+    $ inspec exec rhel7_docker
+
+## Run the Ansible do-some-simple-things playbook as `jenkins`
 
     # su - jenkins
     $ git clone https://github.com/sbonds/learning-jenkins.git
     $ cd learning-jenkins/ansible
     $ ansible-playbook --inventory=localhost, setup-jenkins-docker.yaml
     (complete the Web based setup wizard by hand.)
-    $ ansible-playbook --vault-password-file secret_vault_password --inventory=localhost, setup-jenkins-docker-2.yaml
 
 (The extra comma after `localhost,` is important to distinguish a list of one host from a filename.)
 
-## Run the inspec check as `jenkins`
+## Run the "green" inspec check as `jenkins`
 
     $ cd inspec
-    $ vi rhel7_docker/attributes.yml
-    local_subnet: <the source address in your firewall rule for 8080/50000 below>
-    $ inspec exec rhel7_docker --attrs=rhel7_docker/attributes.yml
+    $ inspec exec rhel7_docker
+
+## Configure a Jenkins pipeline for this project
 
 # Host Setup
 
@@ -122,7 +128,9 @@ Grab the Jenkins Docker image and fire it up. Map /var/run/docker.sock so that t
     # exit
     $ docker restart jenkins
 
-# Configure Jenkins inside container
+# Configure Jenkins inside container (abandoned)
+
+This is no longer being attempted via automation as the effort level was too high for a "Hello, world" level demonstration.
 
 ## Jenkins CLI
 
@@ -214,9 +222,9 @@ Job comes up claiming that re-indexing needs to happen.
 
 It looks like the credentials in the job XML aren't enough to work. (Those embedded IDs are rearing their ugly head.)
 
-TODO NEXT: Re-create the job in the GUI and export both the job definition and the credential definition as XML for later import.
-
 https://stackoverflow.com/questions/41579229/triggering-branch-indexing-on-multibranch-pipelines-jenkins-git
+
+Exported credentials via XML also appear insufficient and the whole thing snowballed badly. Abandon this effort vs. continuing down the yak-shaving path.
 
 # Check build log
 
