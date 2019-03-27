@@ -243,8 +243,6 @@ I was wrong.
 
 Just getting a Docker host set up ended up being a bit of an adventure, and it's not documented here because much of it was probably self-inflicted from trying to use one OS image for too many things. However, since I don't have the money to pay for an electricity bill any larger than it already is, I try to do as much as possible on one server.
 
-Once I get this process working reasonably well, I can try it from the very beginning on a freshly installed CentOS 7 server. That will help me (re) document any issues from the initial Docker setup.
-
 ## Docker images side by side
 
 Getting one Docker container to tell the host how to create other Docker containers should have been pretty simple. The problem is the volume mapping makes no allowance for a GID mismatch between the container host and the containers themselves. Since I can't confirm that every possible container will agree on a GID for the "docker" user (and the owner of the docker IPC socket) it quickly became clear that I'd be reconfiguring a lot of containers.
