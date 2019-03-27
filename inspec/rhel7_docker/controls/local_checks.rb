@@ -60,4 +60,8 @@ control 'docker_container' do
   describe docker.object(docker_container(name: 'jenkins').id).Config.Volumes do
     it { should include '/var/run/docker.sock' }
   end
+
+  # TODO: How to check the group GID and membership within the Docker container?
+  # Perhaps that would be better done as a different Inspec profile since it's
+  # checking the container itself and not the Docker host's view of the container.
 end
