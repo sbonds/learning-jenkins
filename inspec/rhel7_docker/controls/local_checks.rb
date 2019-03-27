@@ -1,6 +1,6 @@
 # encoding: utf-8
 # copyright: 2018, Steve Bonds
-subnet = attribute('local_subnet', description: 'local subnet in IP/bits format')
+#subnet = attribute('local_subnet', description: 'local subnet in IP/bits format')
 
 title 'Checks of the local host for running Jenkins in Docker'
 
@@ -56,3 +56,21 @@ describe firewalld do
   it { should have_rule_enabled('family=ipv4 source address=' + subnet + ' port port=50000 protocol=tcp accept', 'public') }
 end
 =end
+
+control 'docker_container' do
+  title "Check that the 'jenkins' Docker container was created"
+  describe docker_container(name: 'jenkins') do
+    its('id') { should_not eq '' }
+    its('image') { should eq 'jenkinsci/blueocean' }
+    its('ports') { should include '0.0.0.0:8080->8080/tcp' }
+    its('ports') { should include '0.0.0.0:50000->50000/tcp' }
+  end
+
+  # Sadly, docker_container does not include volume info even though
+  # docker.containers does. 
+  # Does not work: 
+  #   its('volumes') { should include '/var/run/docker.sock' }
+  describe docker.object(docker_container(name: 'jenkins').id).Config.Volumes do
+    it { should include '/var/run/docker.sock' }
+  end
+end
