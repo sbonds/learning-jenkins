@@ -32,6 +32,113 @@ For the "red" test we expect some of these to fail, depending on how much was al
 
 ## Configure a Jenkins pipeline for this project
 
+### Connect to Jenkins
+
+It will be on your Docker host on port 8080 via HTTP.
+
+### Enter the Administrator password
+
+Ansible should have shown it to you late in the setup process:
+
+![Ansible admin password display](doc-images/Ansible%20Administrator%20password%20display.png)
+
+Take the setup key (`d58cc5ca1f0440a7b7076aab1c5813d1` in the example above, but yours will be different) and put it into the password field you get when you connect to `http://<your docker host>:8080`:
+
+![Unlock Jenkins screen](doc-images/Jenkins%20initial%20sign%20in.png)
+
+### Choose default plugins
+
+...unless you have something special in mind, but if you did, I doubt you'd be following this super basic process.
+
+![Initial plugins to install](doc-images/Jenkins%20initial%20plugins.png)
+
+The plugin process will proceed...
+
+![Plugins installing](doc-images/Jenkins%20plugins%20installing.png)
+
+### Create first admin user
+
+![First admin user creation screen](doc-images/Jenkins%20first%20admin%20user.png)
+
+Pick what you want here.
+
+### Configure your instance hostname
+
+This should be the same name you're using in the browser unless you have Big Plans and associated DNS entries to go along with those plans.
+
+![Jenkins initial hostname](doc-images/Jenkins%20instance%20hostname.png)
+
+### Welcome to the Jenkins dashboard!
+
+This is where all the good stuff starts.
+
+![Jenkins empty dashboard](doc-images/Jenkins%20empty%20dashboard.png)
+
+### Start to set up a new pipeline
+
+![Jenkins New Item](doc-images/Jenkins%20empty%20dashboard%20new%20item.png)
+
+### Configure the pipeline name, type, and source
+
+#### Name
+
+![Jenkins pipeline name](doc-images/Jenkins%20new%20item%20pipeline%20name.png)
+
+#### Type - multibranch
+
+![Jenkins pipeline type is multibranch](doc-images/Jenkins%20new%20item%20pipeline%20type%20multibranch.png)
+
+#### Source - GitHub
+
+![Jenkins pipeline source from GitHub](doc-images/Jenkins%20new%20item%20branch%20source.png)
+
+You'll get into the specifics here shortly, this is just so Jenkins knows what questions to ask.
+
+### Job credential config
+
+This is used for Jenkins to contact GitHub and pull details out of the GitHub repo containing the `Jenkinsfile` that describes what the pipeline does.
+
+A global credential will allow other jobs to reach additional GitHub repos under the same owner.
+
+![Jenkins global credential setup](doc-images/Jenkins%20job%20credential%20-%20global.png)
+
+For the details you'll need the following:
+* scope: Global (unless you have other plans)
+* username: your GitHub login username
+* password: the API key you created (**NOT YOUR GITHUB PASSWORD**)
+* ID: a made up word uniquely identifying this GitHub API key
+* Description: a made up phrase describing this GitHub API key
+
+![Jenkins global credential details](doc-images/Jenkins%20job%20credential%20details.png)
+
+Even though you just created this new credential to use, and it would be obvious that you now wanted to use it for this job, Jenkins does not select it by default. Ensure this new credential is the one in use to avoid delays from "anonymous" queries of GitHub later on.
+
+![Jenkins global credential added](doc-images/Jenkins%20job%20credential%20added.png)
+
+### Jenkins job GitHub config
+
+Once you type in the owner of the GitHub repo (probably the same as the GitHub username earlier, unless you have a complex Organization-based setup going) Jenkins will query GitHub for a list of your repositories and they will appear as a pull-down under "Repository."
+
+![Jenkins GitHub owner and repository](doc-images/Jenkins%20job%20GitHub%20config.png)
+
+## Jenkins first build results
+
+### Good news!
+
+![Jenkins build worked!](doc-images/Jenkins%20first%20build%20--%20good%20news.png)
+
+You can see the Docker image Go reporting back in the console log:
+
+![Jenkins console log from a successful build](doc-images/Jenkins%20first%20build%20console%20--%20working.png)
+
+### Bad news!
+
+Sometimes things just don't go well. You'll see lots of red and nasty thunderstorm clouds when that happens:
+
+![Jenkins build worked!](doc-images/Jenkins%20first%20build%20--%20bad%20news.png)
+
+The console log is even **MORE** useful when this happens. This was how I figured out all those extra steps to put in the Ansible config.
+
 # Host Setup
 
 ## Inspec
