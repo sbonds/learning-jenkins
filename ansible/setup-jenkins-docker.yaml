@@ -8,7 +8,6 @@
       group:
         name: docker
       register: docker_group
-    - debug: var=docker_group
     - name: Create local 'jenkins' user in 'docker' secondary group
       delegate_to: localhost
       user: 
@@ -30,8 +29,6 @@
         published_ports:
         - 8080:8080
         - 50000:50000
-      register: docker_container_info
-    - debug: var=docker_container_info
     - name: Add Jenkins docker container to inventory for future reconfiguration
       add_host:
         name: jenkins
@@ -40,7 +37,7 @@
       changed_when: false
     - name: Ensure docker group inside container's GID matches outside container (without using Python)
       delegate_to: jenkins
-      raw: "if [ -e /etc/group.bak ]; then exit 0; else sed -i.bak 's/^docker:.*$/docker:x:{{docker_group.gid|quote}}/' /etc/group; fi"
+      raw: "if [ -e /etc/group.bak ]; then exit 0; else sed -i.bak 's/^docker:.*$/docker:x:{{docker_group.gid|quote}}:jenkins/' /etc/group; fi"
     - name: Collect the initial admin password for Jenkins (without using Python)
       delegate_to: jenkins
       raw: "cat /var/jenkins_home/secrets/initialAdminPassword"
@@ -48,7 +45,6 @@
       until: admin_password.failed == false
       retries: 6
       delay: 10
-    - debug: var=admin_password
     - name: Restart the Jenkins Docker container after the GID change
       delegate_to: localhost
       docker_container:
@@ -72,11 +68,10 @@
       file:
         path: /tmp/jenkins-cli.jar
         state: absent
+    - debug: msg="When prompted on the 'Unlock Jenkins' page on port 8080, use {{ admin_password.stdout_lines[0] }} as the Administrator password"
     rescue:
     - name: Delete Jenkins Java CLI
       delegate_to: localhost
       file:
         path: /tmp/jenkins-cli.jar
         state: absent
-
-

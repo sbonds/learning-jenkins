@@ -1,7 +1,5 @@
 # encoding: utf-8
 # copyright: 2018, Steve Bonds
-subnet = attribute('local_subnet', description: 'local subnet in IP/bits format')
-
 title 'Checks of the local host for running Jenkins in Docker'
 
 
@@ -42,17 +40,28 @@ control 'docker_group' do
   end
 end
 
-# Arguably the default doesn't really need to be public, but this lets
-# me be sure which zone to check as Inspec doesn't seem to have a way
-# to refer to the default zone for later checks.
-=begin
-describe firewalld do
-  title "Check that firewall ports are open to the Jenkins container from a local subnet (BUGGY: requires root)"
-  # https://github.com/firewalld/firewalld/issues/111
-  # https://bugzilla.redhat.com/show_bug.cgi?id=1375655
-  it { should be_running }
-  its('default_zone') { should eq 'public' }
-  it { should have_rule_enabled('family=ipv4 source address=' + subnet + ' port port=8080 protocol=tcp accept', 'public') }
-  it { should have_rule_enabled('family=ipv4 source address=' + subnet + ' port port=50000 protocol=tcp accept', 'public') }
+# Can't check local firewall rules without root, and that's not worth the side effects.
+# https://github.com/firewalld/firewalld/issues/111
+# https://bugzilla.redhat.com/show_bug.cgi?id=1375655
+
+control 'docker_container' do
+  title "Check that the 'jenkins' Docker container was created"
+  describe docker_container(name: 'jenkins') do
+    its('id') { should_not eq '' }
+    its('image') { should eq 'jenkinsci/blueocean' }
+    its('ports') { should include '0.0.0.0:8080->8080/tcp' }
+    its('ports') { should include '0.0.0.0:50000->50000/tcp' }
+  end
+
+  # Sadly, docker_container does not include volume info even though
+  # docker.containers does. 
+  # Does not work: 
+  #   its('volumes') { should include '/var/run/docker.sock' }
+  describe docker.object(docker_container(name: 'jenkins').id).Config.Volumes do
+    it { should include '/var/run/docker.sock' }
+  end
+
+  # TODO: How to check the group GID and membership within the Docker container?
+  # Perhaps that would be better done as a different Inspec profile since it's
+  # checking the container itself and not the Docker host's view of the container.
 end
-=end

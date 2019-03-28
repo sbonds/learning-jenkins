@@ -8,23 +8,136 @@ TODO: bash script to set all this up, since bash will be installed by default on
 
     # yum install inspec docker python-docker-py ansible
 
-## Run the Ansible do-most-everything playbook as `jenkins`
+## Run the "red" inspec check as `jenkins`
+
+For the "red" test we expect some of these to fail, depending on how much was already set up.
+
+    $ cd inspec
+    $ inspec exec rhel7_docker
+
+## Run the Ansible do-some-simple-things playbook as `jenkins`
 
     # su - jenkins
     $ git clone https://github.com/sbonds/learning-jenkins.git
     $ cd learning-jenkins/ansible
     $ ansible-playbook --inventory=localhost, setup-jenkins-docker.yaml
-    (complete the Web based setup wizard by hand.)
-    $ ansible-playbook --vault-password-file secret_vault_password --inventory=localhost, setup-jenkins-docker-2.yaml
+    (complete the Web based setup wizard by hand using the initial admin password printed by Ansible)
 
 (The extra comma after `localhost,` is important to distinguish a list of one host from a filename.)
 
-## Run the inspec check as `jenkins`
+## Run the "green" inspec check as `jenkins`
 
     $ cd inspec
-    $ vi rhel7_docker/attributes.yml
-    local_subnet: <the source address in your firewall rule for 8080/50000 below>
-    $ inspec exec rhel7_docker --attrs=rhel7_docker/attributes.yml
+    $ inspec exec rhel7_docker
+
+## Configure a Jenkins pipeline for this project
+
+### Connect to Jenkins
+
+It will be on your Docker host on port 8080 via HTTP.
+
+### Enter the Administrator password
+
+Ansible should have shown it to you late in the setup process:
+
+![Ansible admin password display](doc-images/Ansible%20Administrator%20password%20display.png)
+
+Take the setup key (`d58cc5ca1f0440a7b7076aab1c5813d1` in the example above, but yours will be different) and put it into the password field you get when you connect to `http://<your docker host>:8080`:
+
+![Unlock Jenkins screen](doc-images/Jenkins%20initial%20sign%20in.png)
+
+### Choose default plugins
+
+...unless you have something special in mind, but if you did, I doubt you'd be following this super basic process.
+
+![Initial plugins to install](doc-images/Jenkins%20initial%20plugins.png)
+
+The plugin process will proceed...
+
+![Plugins installing](doc-images/Jenkins%20plugins%20installing.png)
+
+### Create first admin user
+
+![First admin user creation screen](doc-images/Jenkins%20first%20admin%20user.png)
+
+Pick what you want here.
+
+### Configure your instance hostname
+
+This should be the same name you're using in the browser unless you have Big Plans and associated DNS entries to go along with those plans.
+
+![Jenkins initial hostname](doc-images/Jenkins%20instance%20hostname.png)
+
+### Welcome to the Jenkins dashboard!
+
+This is where all the good stuff starts.
+
+![Jenkins empty dashboard](doc-images/Jenkins%20empty%20dashboard.png)
+
+### Start to set up a new pipeline
+
+![Jenkins New Item](doc-images/Jenkins%20empty%20dashboard%20new%20item.png)
+
+### Configure the pipeline name, type, and source
+
+#### Name
+
+![Jenkins pipeline name](doc-images/Jenkins%20new%20item%20pipeline%20name.png)
+
+#### Type - multibranch
+
+![Jenkins pipeline type is multibranch](doc-images/Jenkins%20new%20item%20pipeline%20type%20multibranch.png)
+
+#### Source - GitHub
+
+![Jenkins pipeline source from GitHub](doc-images/Jenkins%20new%20item%20branch%20source.png)
+
+You'll get into the specifics here shortly, this is just so Jenkins knows what questions to ask.
+
+### Job credential config
+
+This is used for Jenkins to contact GitHub and pull details out of the GitHub repo containing the `Jenkinsfile` that describes what the pipeline does.
+
+A global credential will allow other jobs to reach additional GitHub repos under the same owner.
+
+![Jenkins global credential setup](doc-images/Jenkins%20job%20credential%20-%20global.png)
+
+For the details you'll need the following:
+* scope: Global (unless you have other plans)
+* username: your GitHub login username
+* password: the API key you created (**NOT YOUR GITHUB PASSWORD**)
+* ID: a made up word uniquely identifying this GitHub API key
+* Description: a made up phrase describing this GitHub API key
+
+![Jenkins global credential details](doc-images/Jenkins%20job%20credential%20details.png)
+
+Even though you just created this new credential to use, and it would be obvious that you now wanted to use it for this job, Jenkins does not select it by default. Ensure this new credential is the one in use to avoid delays from "anonymous" queries of GitHub later on.
+
+![Jenkins global credential added](doc-images/Jenkins%20job%20credential%20added.png)
+
+### Jenkins job GitHub config
+
+Once you type in the owner of the GitHub repo (probably the same as the GitHub username earlier, unless you have a complex Organization-based setup going) Jenkins will query GitHub for a list of your repositories and they will appear as a pull-down under "Repository."
+
+![Jenkins GitHub owner and repository](doc-images/Jenkins%20job%20GitHub%20config.png)
+
+## Jenkins first build results
+
+### Good news!
+
+![Jenkins build worked!](doc-images/Jenkins%20first%20build%20--%20good%20news.png)
+
+You can see the Docker image Go reporting back in the console log:
+
+![Jenkins console log from a successful build](doc-images/Jenkins%20first%20build%20console%20--%20working.png)
+
+### Bad news!
+
+Sometimes things just don't go well. You'll see lots of red and nasty thunderstorm clouds when that happens:
+
+![Jenkins build worked!](doc-images/Jenkins%20first%20build%20--%20bad%20news.png)
+
+The console log is even **MORE** useful when this happens. This was how I figured out all those extra steps to put in the Ansible config.
 
 # Host Setup
 
@@ -122,7 +235,9 @@ Grab the Jenkins Docker image and fire it up. Map /var/run/docker.sock so that t
     # exit
     $ docker restart jenkins
 
-# Configure Jenkins inside container
+# Configure Jenkins inside container (abandoned)
+
+This is no longer being attempted via automation as the effort level was too high for a "Hello, world" level demonstration.
 
 ## Jenkins CLI
 
@@ -214,9 +329,9 @@ Job comes up claiming that re-indexing needs to happen.
 
 It looks like the credentials in the job XML aren't enough to work. (Those embedded IDs are rearing their ugly head.)
 
-TODO NEXT: Re-create the job in the GUI and export both the job definition and the credential definition as XML for later import.
-
 https://stackoverflow.com/questions/41579229/triggering-branch-indexing-on-multibranch-pipelines-jenkins-git
+
+Exported credentials via XML also appear insufficient and the whole thing snowballed badly. Abandon this effort vs. continuing down the yak-shaving path.
 
 # Check build log
 
@@ -224,44 +339,6 @@ Good news:
 
     + go version
     go version go1.12.1 linux/amd64
-
-# Bare metal physical server setup
-
-There's nothing like starting from (almost) nothing to ensure that a process works. What is needed to set up a Docker host starting from an empty server?
-
-## Hardware config
-
-While other hardware would likely work, this is what I have available. These 5+ year old servers can be found very cheap and are new enough that power usage was starting to be a concern, so they only pull about 100W instead of the 300W of older models. It adds up when running 24x7.
-
-### Server: HP DL380 G7
-
-## Boot config
-
-Goal: Boot the server for PXE network boot and the OS gets installed
-
-### DHCP
-
-TODO: Inspec test for DHCP entries
-
-### DDNS (optional)
-
-TODO: Is there a way for the ILO to register its connection into a DNS subdomain?
-
-### PXE/TFTP
-
-TODO: Inspec test for PXE entries and related configs needed to network boot
-
-### iSCSI (optional)
-
-TODO: Avoid the need for internal drives and boot from iSCSI. This never worked well and internal drives in the server are not hard to arrange, so this is a pretty low priority
-
-### Kickstart
-
-Defines the OS configuration as much as possible. Avoid complex Bash scripts in favor of Ansible later.
-
-### Ansible
-
-Configure things that can't be easily captured in Kickstart.
 
 # Why all this?
 
@@ -272,8 +349,6 @@ I thought this would be a quick and easy thing to try out, after all, Jenkins ha
 I was wrong.
 
 Just getting a Docker host set up ended up being a bit of an adventure, and it's not documented here because much of it was probably self-inflicted from trying to use one OS image for too many things. However, since I don't have the money to pay for an electricity bill any larger than it already is, I try to do as much as possible on one server.
-
-Once I get this process working reasonably well, I can try it from the very beginning on a freshly installed CentOS 7 server. That will help me (re) document any issues from the initial Docker setup.
 
 ## Docker images side by side
 
