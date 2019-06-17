@@ -48,11 +48,54 @@ Panelists (top to bottom at start):
 
 23:30 [Sam] Internal candidates already have a lot of company-specific knowledge that simply cannot be hired.
 
+### "t-shaped" skill sets-- broad knowledge in addition to specialty
+
 24:55 [Jayne] Historically we've had IT people think of themselves in terms of a single specialty. ("I'm a software engineer.") Now we want people with good general skills too, not deep specialists.
 
 27:40 [Sam] What does CloudBees do to help people gain breadth in addition to a given specialty?
 
 28:00 [Sacha] Let people follow their curiosity. Change departments, attend conferences. Contributing to Open Source is a good way for developers to help a greater good.
+
+31:15 [Tapabrata] Prefers looking at LinkedIn info and GitHub repos rather than people's resumes.
+
+33:16 [Robert] What does it really mean to be "Full Stack?" A frequent problem with staffing and hiring is that this can mean different things to different people. Show constant personal growth via GitHub on each tier of development. Sometimes clients think they're buying 1 person to do 2-3 jobs as a cost savings.
+
+38:15 [Tapabrata] "Nobody means all the way to the metal when they say Full Stack."
+
+(Personal note: too bad, since that would be really helpful for developers to know things to that level.)
+
+40:10 [Sam] Safe failures are a key to fast learning and broad learning.
+
+### soft skills
+
+43:30 [Paul] Soft skills can tie back to reference checks. For example, asking for a specific person from a specific recent job who could speak to how collaborative or empathetic the candidate was in a given situation (e.g. "tight timeline, release pressure, etc.")
+
+44:38 [Sacha] HBDI (?) personality awareness to help guide team needs. Weighing personality vs. organization and describes likely methods of reacting to a particular situation. Compare normal vs. stressed reactions.
+
+47:00 [Sacha] Individual Contributors can sometimes get away with less advanced soft skills, but managers cannot.
+
+47:50 [Jayne] Easy to assume people will self-develop their soft skills. Self-awareness is helpful, but being aware of how other people best operate is also very useful. "Some people want you to ask about the family, others want to get right to the topic." DevOps institute recent book on cultural resilience.
+
+50:20 [Tapabrata] Managers need different soft skills than individual contibutors, not necessarily more. ICs need to convince people in order to have influence rather than having organizationally-determined forced influence.
+
+### hiring or being hired
+
+Conventions of interest:
+
+* DevOps World (Jenkins): Aug 12-15 2019 in San Francisco CA
+* DevOps Enterprise Summit: Oct 2?-30 2019 in Las Vegas NV
+* CloudBees Days: (nothing remotely local to western USA)
+* Paris Jenkins Area Meetup: (nothing remotely local to western USA)
+
+54:40 [Paul] Better to see what someone has already done (internal) vs. someone who can talk big but might not actually be able to show it. This also reduces the risk of a bad placement. Start with someone who has deep skills in something like development or systems administration and then work on broadening those skills.
+
+57:00 [Jayne] "DevOps Engineer" was the top most hired position despite its poorly defined scope. "DevOps Coach" is also a highly hired position.
+
+### Summary: no real specifics on resources
+
+I came looking for information about resources and methods for self-upskilling. While the discussion was interesting, there was never any specifics about how to gain the skills they talk about.
+
+A good intro-level survey of business soft skills can be found at [Crash Course: Business Soft Skills](https://www.youtube.com/playlist?list=PL8dPuuaLjXtMBsfP-lP28IFvfkISqJofM).
 
 ## [Upskilling: Enterprise DevOps Skills Report Results!](https://webinars.devops.com/upskilling-enterprise-devops-skills-report-results)
 
